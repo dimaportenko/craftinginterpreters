@@ -15,8 +15,20 @@ async function runFile(filePath: string) {
   run(fileText);
 }
 
-function runPrompt() {
-  console.log("-- run prompt");
+async function runPrompt() {
+  const prompt = "Enter file lox filepath: ";
+  process.stdout.write(prompt);
+
+  for await (const line of console) {
+    try {
+      await runFile(line);
+      break;
+    } catch (error) {
+      console.error(error);
+
+      process.stdout.write(prompt);
+    }
+  }
 }
 
 function lox() {
@@ -27,8 +39,7 @@ function lox() {
   } else if (args.length === 1) {
     runFile(args[0]);
   } else {
-    // run prompt
-    console.log("run prompt");
+    runPrompt();
   }
 }
 

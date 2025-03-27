@@ -1,5 +1,6 @@
 {
   "commands": {
-    "run": "bun run index.ts lox/hello.lox"
-   }
+    "run": "bun run index.ts lox/hello.lox",
+    "run:noparams": "bun run index.ts"
+  }
 }
