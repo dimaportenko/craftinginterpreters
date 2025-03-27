@@ -16,18 +16,17 @@ async function runFile(filePath: string) {
 }
 
 async function runPrompt() {
-  const prompt = "Enter file lox filepath: ";
+  const prompt = "Enter lox code line by line: \n";
   process.stdout.write(prompt);
 
+  process.stdout.write(">");
   for await (const line of console) {
-    try {
-      await runFile(line);
-      break;
-    } catch (error) {
-      console.error(error);
-
-      process.stdout.write(prompt);
+    if (line === "exit") {
+      exit(0);
     }
+
+    run(line);
+    process.stdout.write(">");
   }
 }
 
