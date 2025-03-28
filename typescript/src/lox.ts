@@ -1,45 +1,54 @@
 import { exit } from "process";
+import { Scanner } from "./scanner";
 
-function run(text: string) {
-  console.log("-- LOX run");
-}
+export class Lox {
+  run(text: string) {
+    console.log("-- LOX run: \n", text);
 
-async function runFile(filePath: string) {
-  console.log("-- runFile ", filePath);
-  const file = Bun.file(filePath);
+    const scanner = new Scanner(text);
+    const tokens = scanner.scanTokens();
 
-  const fileText = await file.text();
+    console.log("-- LOX tokens: ", tokens);
+    tokens.forEach((token) => {
+      console.log(token);
+    });
+  }
 
-  console.log("-- File Text:\n", fileText);
+  async runFile(filePath: string) {
+    console.log("-- runFile ", filePath);
+    const file = Bun.file(filePath);
 
-  run(fileText);
-}
+    const fileText = await file.text();
 
-async function runPrompt() {
-  const prompt = "Enter lox code line by line: \n";
-  process.stdout.write(prompt);
+    console.log("-- File Text:\n", fileText);
 
-  process.stdout.write(">");
-  for await (const line of console) {
-    if (line === "exit") {
-      exit(0);
-    }
+    this.run(fileText);
+  }
 
-    run(line);
+  async runPrompt() {
+    const prompt = "Enter lox code line by line: \n";
+    process.stdout.write(prompt);
+
     process.stdout.write(">");
+    for await (const line of console) {
+      if (line === "exit") {
+        exit(0);
+      }
+
+      this.run(line);
+      process.stdout.write(">");
+    }
+  }
+
+  main() {
+    const args = Bun.argv.slice(2);
+    if (args.length > 1) {
+      console.log("Usage: tslox [script]");
+      exit(64);
+    } else if (args.length === 1) {
+      this.runFile(args[0]);
+    } else {
+      this.runPrompt();
+    }
   }
 }
-
-function lox() {
-  const args = Bun.argv.slice(2);
-  if (args.length > 1) {
-    console.log("Usage: tslox [script]");
-    exit(64);
-  } else if (args.length === 1) {
-    runFile(args[0]);
-  } else {
-    runPrompt();
-  }
-}
-
-export { lox };

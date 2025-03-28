@@ -1,3 +1,4 @@
-import { lox } from '@/lox'
+import { Lox } from "@/lox";
 
-lox();
+const lox = new Lox();
+lox.main();
