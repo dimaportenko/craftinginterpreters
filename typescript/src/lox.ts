@@ -2,6 +2,8 @@ import { exit } from "process";
 import { Scanner } from "./scanner";
 
 export class Lox {
+  static hadError = false;
+
   run(text: string) {
     console.log("-- LOX run: \n", text);
 
@@ -23,6 +25,10 @@ export class Lox {
     console.log("-- File Text:\n", fileText);
 
     this.run(fileText);
+
+    if (Lox.hadError) {
+      exit(65);
+    }
   }
 
   async runPrompt() {
@@ -36,6 +42,8 @@ export class Lox {
       }
 
       this.run(line);
+      Lox.hadError = false;
+
       process.stdout.write(">");
     }
   }
@@ -50,5 +58,13 @@ export class Lox {
     } else {
       this.runPrompt();
     }
+  }
+
+  static error(line: number, message: string) {
+    Lox.report(line, "", message);
+  }
+
+  private static report(line: number, where: string, message: string) {
+    process.stderr.write(`[${line}] Error ${where}: ${message}`);
   }
 }
