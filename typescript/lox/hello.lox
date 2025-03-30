@@ -1,4 +1,4 @@
 // my test lox script
 
 var language = "lox";
-var math = 2 + (8 / 4);
+var math = 2 + (80 / 4.01);

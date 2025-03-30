@@ -105,7 +105,7 @@ export class Scanner {
 
       default: {
         if (this.isDigit(character)) {
-          this.number();
+          this.num();
         } else {
           Lox.error(this.line, `Unexpected character: "${character}"`);
         }
@@ -133,12 +133,15 @@ export class Scanner {
     this.addToken(TokenType.STRING, value);
   }
 
-  private number() {
+  private num() {
     while (this.isDigit(this.peek())) {
       this.advance();
     }
 
     if (this.peek() === "." && this.isDigit(this.peekNext())) {
+      // consume "."
+      this.advance();
+
       while (this.isDigit(this.peek())) {
         this.advance();
       }
