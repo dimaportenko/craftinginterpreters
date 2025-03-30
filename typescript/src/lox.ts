@@ -65,6 +65,6 @@ export class Lox {
   }
 
   private static report(line: number, where: string, message: string) {
-    process.stderr.write(`[${line}] Error ${where}: ${message}`);
+    process.stderr.write(`[${line}] Error ${where}: ${message}\n`);
   }
 }

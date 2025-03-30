@@ -1,4 +1,5 @@
 import { Token, TokenType, type Literal } from "@/token";
+import { Lox } from "@/lox";
 
 export class Scanner {
   start: number = 0;
@@ -57,7 +58,70 @@ export class Scanner {
       case "*":
         this.addToken(TokenType.STAR);
         break;
+
+      case "!":
+        this.match("=")
+          ? this.addToken(TokenType.BANG_EQUAL)
+          : this.addToken(TokenType.BANG);
+        break;
+      case "=":
+        this.match("=")
+          ? this.addToken(TokenType.EQUAL_EQUAL)
+          : this.addToken(TokenType.EQUAL);
+        break;
+      case "<":
+        this.match("=")
+          ? this.addToken(TokenType.LESS_EQUAL)
+          : this.addToken(TokenType.LESS);
+        break;
+      case ">":
+        this.match("=")
+          ? this.addToken(TokenType.GREATER_EQUAL)
+          : this.addToken(TokenType.GREATER);
+        break;
+
+      case "/":
+        if (this.match("/")) {
+          while (this.peek() !== "\n" && !this.isAtEnd()) {
+            this.advance();
+          }
+        } else {
+          this.addToken(TokenType.SLASH);
+        }
+        break;
+
+      case " ":
+      case "\r":
+      case "\t":
+        break;
+
+      case "\n":
+        this.line++;
+        break;
+
+      default:
+        Lox.error(this.line, `Unexpected character: "${character}"`);
     }
+  }
+
+  private peek() {
+    if (this.isAtEnd()) {
+      return "\0";
+    }
+    return this.source.at(this.current);
+  }
+
+  private match(expected: string) {
+    if (this.isAtEnd()) {
+      return false;
+    }
+
+    if (this.source.at(this.current) !== expected) {
+      return false;
+    }
+
+    this.current++;
+    return true;
   }
 
   private addToken(tokenType: TokenType, literal: Literal = null) {
