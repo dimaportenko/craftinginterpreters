@@ -103,8 +103,13 @@ export class Scanner {
         this.str();
         break;
 
-      default:
-        Lox.error(this.line, `Unexpected character: "${character}"`);
+      default: {
+        if (this.isDigit(character)) {
+          this.number();
+        } else {
+          Lox.error(this.line, `Unexpected character: "${character}"`);
+        }
+      }
     }
   }
 
@@ -128,11 +133,36 @@ export class Scanner {
     this.addToken(TokenType.STRING, value);
   }
 
+  private number() {
+    while (this.isDigit(this.peek())) {
+      this.advance();
+    }
+
+    if (this.peek() === "." && this.isDigit(this.peekNext())) {
+      while (this.isDigit(this.peek())) {
+        this.advance();
+      }
+    }
+
+    this.addToken(
+      TokenType.NUMBER,
+      this.source.substring(this.start, this.current),
+    );
+  }
+
   private peek() {
     if (this.isAtEnd()) {
       return "\0";
     }
-    return this.source.at(this.current);
+    return this.source.charAt(this.current);
+  }
+
+  private peekNext() {
+    if (this.current + 1 > this.source.length) {
+      return "\0";
+    }
+
+    return this.source.charAt(this.current + 1);
   }
 
   private match(expected: string) {
@@ -154,10 +184,21 @@ export class Scanner {
   }
 
   private advance() {
-    return this.source.at(this.current++);
+    return this.source.charAt(this.current++);
   }
 
   isAtEnd() {
     return this.current >= this.source.length;
+  }
+
+  isDigit(character: string) {
+    return (
+      this.charCode(character) >= this.charCode("0") &&
+      this.charCode(character) <= this.charCode("9")
+    );
+  }
+
+  charCode(character: string) {
+    return character.charCodeAt(0);
   }
 }
