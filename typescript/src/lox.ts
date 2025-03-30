@@ -10,7 +10,7 @@ export class Lox {
     const scanner = new Scanner(text);
     const tokens = scanner.scanTokens();
 
-    console.log("-- LOX tokens: ", tokens);
+    // console.log("-- LOX tokens: ", tokens);
     tokens.forEach((token) => {
       console.log(token);
     });
