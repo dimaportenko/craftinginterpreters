@@ -113,6 +113,7 @@ export class Scanner {
     }
   }
 
+  /** @description scan string */
   private str() {
     while (this.peek() !== '"' && !this.isAtEnd()) {
       if (this.peek() === "\n") {
@@ -133,6 +134,7 @@ export class Scanner {
     this.addToken(TokenType.STRING, value);
   }
 
+  /** @description scan number */
   private num() {
     while (this.isDigit(this.peek())) {
       this.advance();
@@ -153,6 +155,7 @@ export class Scanner {
     );
   }
 
+  /** @description pick current character */
   private peek() {
     if (this.isAtEnd()) {
       return "\0";
@@ -160,6 +163,7 @@ export class Scanner {
     return this.source.charAt(this.current);
   }
 
+  /** @description pick next character */
   private peekNext() {
     if (this.current + 1 > this.source.length) {
       return "\0";
@@ -173,7 +177,7 @@ export class Scanner {
       return false;
     }
 
-    if (this.source.at(this.current) !== expected) {
+    if (this.source.charAt(this.current) !== expected) {
       return false;
     }
 
@@ -186,22 +190,23 @@ export class Scanner {
     this.tokens.push(new Token(tokenType, text, literal, this.line));
   }
 
+  /** @description move to next character */
   private advance() {
     return this.source.charAt(this.current++);
   }
 
-  isAtEnd() {
+  private isAtEnd() {
     return this.current >= this.source.length;
   }
 
-  isDigit(character: string) {
+  private isDigit(character: string) {
     return (
       this.charCode(character) >= this.charCode("0") &&
       this.charCode(character) <= this.charCode("9")
     );
   }
 
-  charCode(character: string) {
+  private charCode(character: string) {
     return character.charCodeAt(0);
   }
 }
