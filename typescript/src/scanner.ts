@@ -1,4 +1,4 @@
-import { Token, TokenType, type Literal } from "@/token";
+import { keywords, Token, TokenType, type Literal } from "@/token";
 import { Lox } from "@/lox";
 
 export class Scanner {
@@ -106,6 +106,8 @@ export class Scanner {
       default: {
         if (this.isDigit(character)) {
           this.num();
+        } else if (this.isAlpha(character)) {
+          this.identifier();
         } else {
           Lox.error(this.line, `Unexpected character: "${character}"`);
         }
@@ -132,6 +134,16 @@ export class Scanner {
 
     const value = this.source.substring(this.start + 1, this.current - 1);
     this.addToken(TokenType.STRING, value);
+  }
+
+  private identifier() {
+    while (this.isAlphaNumberic(this.peek())) {
+      this.advance();
+    }
+
+    const value = this.source.substring(this.start, this.current);
+    const type = keywords[value] ?? TokenType.IDENTIFIER;
+    this.addToken(type);
   }
 
   /** @description scan number */
@@ -204,6 +216,19 @@ export class Scanner {
       this.charCode(character) >= this.charCode("0") &&
       this.charCode(character) <= this.charCode("9")
     );
+  }
+
+  private isAlpha(character: string) {
+    const charCode = this.charCode(character);
+    return (
+      (charCode >= this.charCode("a") && charCode <= this.charCode("z")) ||
+      (charCode >= this.charCode("A") && charCode <= this.charCode("Z")) ||
+      charCode === this.charCode("_")
+    );
+  }
+
+  private isAlphaNumberic(character: string) {
+    return this.isDigit(character) || this.isAlpha(character);
   }
 
   private charCode(character: string) {
