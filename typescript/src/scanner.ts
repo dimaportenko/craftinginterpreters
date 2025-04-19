@@ -1,5 +1,6 @@
-import { keywords, Token, TokenType, type Literal } from "@/token";
+import { keywords, Token, TokenType } from "@/token";
 import { Lox } from "@/lox";
+import type { LoxObject } from "@/types";
 
 export class Scanner {
   start: number = 0;
@@ -197,7 +198,7 @@ export class Scanner {
     return true;
   }
 
-  private addToken(tokenType: TokenType, literal: Literal = null) {
+  private addToken(tokenType: TokenType, literal: LoxObject = null) {
     const text = this.source.substring(this.start, this.current);
     this.tokens.push(new Token(tokenType, text, literal, this.line));
   }
